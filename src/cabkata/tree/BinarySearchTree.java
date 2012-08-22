@@ -164,35 +164,30 @@ public class BinarySearchTree<V extends Comparable<? super V>> {
 			return;
 		}
 
-		insert(v, root);
-	}
-
-	private void insert(V v, Node<V> node)
-	{
-		if (v.compareTo(node.value) == -1)
+		Node<V> parent =  null;
+		Node<V> itr = root;
+		
+		while(itr != null)
 		{
-			if (node.left == null)
+			parent = itr;
+			if(v.compareTo(itr.value) == -1)
 			{
-				node.left = new Node<V>(v, node);
-				return;
+				itr = itr.left;
 			}
 			else
 			{
-				insert(v, node.left);
+				itr = itr.right;
 			}
+		}
+		
+		if(v.compareTo(parent.value) == -1)
+		{
+			parent.left = new Node<V>(v, parent);
 		}
 		else
 		{
-			if (node.right == null)
-			{
-				node.right = new Node<V>(v, node);
-				return;
-			}
-			else
-			{
-				insert(v, node.right);
-			}
-		}
+			parent.right = new Node<V>(v, parent);
+		}			
 	}
 
 	public void printInorder(StringBuffer buffer)
