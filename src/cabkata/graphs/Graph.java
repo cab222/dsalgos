@@ -64,6 +64,16 @@ public class Graph<V> {
 			return to;
 		}
 		
+		public Node<T> getFrom()
+		{
+			return from;
+		}
+		
+		public double getWeight()
+		{
+			return weight;
+		}
+		
 		@Override
 		public boolean equals(Object o)
 		{
@@ -89,6 +99,13 @@ public class Graph<V> {
 			result = 37*result + this.from.hashCode();
 			result = 37*result + this.to.hashCode();
 			return result;
+		}
+		
+		@Override
+		public String toString()
+		{
+			return new StringBuffer("<").append(from.value).append(",").
+					append(to.value).append(",").append(weight).append(">").toString();
 		}
 	}
 	

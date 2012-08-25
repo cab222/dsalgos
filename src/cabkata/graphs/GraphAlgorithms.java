@@ -1,14 +1,20 @@
 package cabkata.graphs;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 
 import cabkata.graphs.Graph.Node;
 import cabkata.graphs.Graph.WeightedEdge;
+import cabkata.sets.DisjointSet;
 
 public class GraphAlgorithms<V> {
 	private final Map<V, NodeSate> nodeState = new HashMap<V, NodeSate>();
@@ -144,5 +150,54 @@ public class GraphAlgorithms<V> {
 	public int getDistance(V v)
 	{
 		return distances.get(v).intValue();
+	}
+	
+	public Set<WeightedEdge<V>> minimumSpanningTreeKruskal(Graph<V> graph)
+	{
+		Set<WeightedEdge<V>> mst = new HashSet<WeightedEdge<V>>();
+		List<WeightedEdge<V>> edges = new ArrayList<WeightedEdge<V>>(graph.getEdges());
+		Collection<Node<V>> nodes = graph.getNodes();
+		DisjointSet<Node<V>> disjointSet = new DisjointSet<Node<V>>();
+		
+		//Now we have a forest of singleton node sets
+		for(Node<V> node : nodes)
+		{
+			disjointSet.add(node);
+		}
+		
+		//edges are now sorted by weight
+		Collections.sort(edges, new Comparator<WeightedEdge<V>>(){
+			@Override
+			public int compare(WeightedEdge<V> o1, WeightedEdge<V> o2)
+			{
+				if(o1 == o2)
+					return 0;
+				
+				if(o1.getWeight() < o2.getWeight())
+				{
+					return -1;
+				}
+				else
+				{
+					return 1;
+				}
+			}
+		});
+		
+		for(WeightedEdge<V> edge : edges)
+		{
+			Node<V> from = edge.getFrom();
+			Node<V> to = edge.getTo();
+			Set<Node<V>> fromSet = disjointSet.get(from);
+			Set<Node<V>> toSet = disjointSet.get(to);
+			
+			if(fromSet != toSet)
+			{
+				disjointSet.union(from, to);
+				mst.add(edge);
+			}
+		}
+		
+		return mst;
 	}
 }
