@@ -1,19 +1,13 @@
 package cabkata.graphs;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import cabkata.graphs.Graph.Node;
-import cabkata.graphs.Graph.WeightedEdge;
-
 /**
- * @author carlobarbara
  *
  * @param <V>
  */
@@ -136,8 +130,7 @@ public class Graph<V> {
 			return result;
 		}
 	}
-	
-	
+		
 	public static Graph<String> graphFromStringEdges(Collection<String> egdgesAsStrings)
 	{
 		Graph<String> graph = new Graph<String>();
@@ -148,8 +141,7 @@ public class Graph<V> {
 			if(parts.length < 1 || parts.length > 3)
 			{
 				throw new IllegalArgumentException("Edges format: {fromValue,toValue,OptionalWeight}");
-			}
-			
+			}		
 			
 			//TODO: If I really want this to be generic, I should have some
 			//V.valueOf(String string)
