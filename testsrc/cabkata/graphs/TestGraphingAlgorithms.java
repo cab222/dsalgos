@@ -7,6 +7,8 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+import cabkata.graphs.Graph.EdgeType;
+
 public class TestGraphingAlgorithms {
 
 	@Test
@@ -36,7 +38,7 @@ public class TestGraphingAlgorithms {
 		  tie <2,5>		
           jacket <3,4>
         */		
-		Graph<String> graph = Graph.graphFromStringEdges(edgesAsString);
+		Graph<String> graph = Graph.graphFromStringEdges(edgesAsString, EdgeType.DIRECTED);
 		GraphAlgorithms<String> graphAlgorithms = new GraphAlgorithms<String>();
 		List<String> topoloicalSortedList = graphAlgorithms.toplogicalSort(graph);
 		assertEquals(topoloicalSortedList.get(0), "socks");
@@ -52,6 +54,31 @@ public class TestGraphingAlgorithms {
 		assertEquals(graphAlgorithms.getFinish("socks"), 18);
 		assertEquals(graphAlgorithms.getStart("tie"), 2);
 		assertEquals(graphAlgorithms.getFinish("tie"), 5);
-
+	}
+	
+	@Test
+	public void testBreadthFirstSearch()
+	{
+		List<String> edgesAsString = Arrays.asList(
+				"r,s", 
+				"r,v", 
+				"s,w", 
+				"w,t", 
+				"w,x", 
+				"t,x", 
+				"t,u", 
+				"x,u", 
+				"x,y", 
+				"u,y"
+				 );
+		Graph<String> graph = Graph.graphFromStringEdges(edgesAsString, EdgeType.UNDIRECTED);
+		GraphAlgorithms<String> graphAlgorithms = new GraphAlgorithms<String>();
+		graphAlgorithms.breadthFirstSearch(graph, "s");
+		assertEquals(graphAlgorithms.getDistance("r"), 1);
+		assertEquals(graphAlgorithms.getDistance("w"), 1);
+		assertEquals(graphAlgorithms.getDistance("t"), 2);
+		assertEquals(graphAlgorithms.getDistance("x"), 2);
+		assertEquals(graphAlgorithms.getDistance("u"), 3);
+		assertEquals(graphAlgorithms.getDistance("y"), 3);	
 	}
 }

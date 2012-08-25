@@ -2,8 +2,10 @@ package cabkata.graphs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import cabkata.graphs.Graph.Node;
 import cabkata.graphs.Graph.WeightedEdge;
@@ -13,6 +15,7 @@ public class GraphAlgorithms<V> {
     private final Map<V, V> predecessors = new HashMap<V, V>();
     private final Map<V, Integer> finishTime = new HashMap<V, Integer>(); 
     private final Map<V, Integer> startTime = new HashMap<V, Integer>();
+    private final Map<V, Integer> distances = new HashMap<V, Integer>();
     private int time = 0;
     private static enum NodeSate
     {
@@ -88,6 +91,7 @@ public class GraphAlgorithms<V> {
 		predecessors.clear();
 		finishTime.clear();
 		startTime.clear();
+		distances.clear();
 		
 		for(Node<V> node : graph.getNodes())
 		{
@@ -95,6 +99,7 @@ public class GraphAlgorithms<V> {
 			predecessors.put(node.getValue(), null);
 			finishTime.put(node.getValue(), Integer.valueOf(0));
 			startTime.put(node.getValue(), Integer.valueOf(0));
+			distances.put(node.getValue(), Integer.valueOf(0));
 		}
 	}
 	
@@ -108,4 +113,36 @@ public class GraphAlgorithms<V> {
 		return finishTime.containsKey(v) ? finishTime.get(v).intValue() : 0;
 	}
 
+	public void breadthFirstSearch(Graph<V> graph, V source)
+	{
+		initializeGraph(graph);
+		Queue<Node<V>> q = new LinkedList<Node<V>>();
+		Node<V> sourceNode = graph.getNode(source);
+		nodeState.put(sourceNode.getValue(), NodeSate.VISITED);
+		distances.put(sourceNode.getValue(), Integer.valueOf(0));
+		q.offer(sourceNode);
+		
+		while(!q.isEmpty())
+		{
+			Node<V> currentNode = q.remove();
+			for(WeightedEdge<V> edge : currentNode.getAdjacentyList())
+			{
+				Node<V> adjacentNode = edge.getTo();
+				if(isNodeUnvisted(adjacentNode))
+				{
+					nodeState.put(adjacentNode.getValue(), NodeSate.VISITED);
+					markPredecessor(adjacentNode, currentNode);
+					distances.put(adjacentNode.getValue(), 
+							Integer.valueOf(distances.get(currentNode.getValue()).intValue() + 1));
+					q.offer(adjacentNode);
+				}	
+			}
+			nodeState.put(currentNode.getValue(), NodeSate.FINISHED);
+		}
+	}
+	
+	public int getDistance(V v)
+	{
+		return distances.get(v).intValue();
+	}
 }

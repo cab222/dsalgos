@@ -14,7 +14,11 @@ import java.util.Set;
 public class Graph<V> {
 	private final Map<V, Node<V>> nodes = new HashMap<V, Node<V>>();
 	private final Set<WeightedEdge<V>> edges = new HashSet<WeightedEdge<V>>();
-	
+
+	public static enum EdgeType{
+		DIRECTED,
+		UNDIRECTED
+	}
 	/**
 	 * Returns the collection of nodes in the graph
 	 * note that modifiying this list has no effect on the graph as it's
@@ -25,6 +29,11 @@ public class Graph<V> {
 	{
 		Set<Node<V>> nodeCopy = new HashSet<Node<V>>(nodes.values());
 		return nodeCopy;
+	}
+	
+	public Node<V> getNode(V v)
+	{
+		return nodes.get(v);
 	}
 	
 	/**
@@ -131,7 +140,7 @@ public class Graph<V> {
 		}
 	}
 		
-	public static Graph<String> graphFromStringEdges(Collection<String> egdgesAsStrings)
+	public static Graph<String> graphFromStringEdges(Collection<String> egdgesAsStrings, EdgeType edgeType)
 	{
 		Graph<String> graph = new Graph<String>();
 		
@@ -169,6 +178,11 @@ public class Graph<V> {
 					weight = Double.valueOf(parts[2]);
 				}
 				addEdge(graph, fromNode, toNode, weight);
+				
+				if(edgeType.equals(EdgeType.UNDIRECTED))
+				{
+					addEdge(graph, toNode, fromNode, weight);
+				}
 			}
 		}
 		return graph;
