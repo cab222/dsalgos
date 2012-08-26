@@ -85,7 +85,7 @@ public class TestGraphingAlgorithms {
 	}
 	
 	@Test 
-	public void testMinimumSpanningTreeKruskal()
+	public void testMinimumSpanningTree()
 	{
 		List<String> edgesAsString = Arrays.asList(
 				"a,b,4", 
@@ -112,10 +112,18 @@ public class TestGraphingAlgorithms {
 		double sum = 0;
 		for(WeightedEdge<String> edge : mstEdges)
 		{
-			System.out.println(edge);
 			sum += edge.getWeight();
 		}
-		
 		assertEquals(37.0, sum, .0001);
+		
+		graphAlgo = new GraphAlgorithms<String>();
+		mstEdges = graphAlgo.minimumSpanningTreePrim(graph, "a");
+		sum = 0;
+		for(WeightedEdge<String> edge : mstEdges)
+		{
+			sum += edge.getWeight();
+		}
+		assertEquals(37.0, sum, .0001);
+
 	}
 }

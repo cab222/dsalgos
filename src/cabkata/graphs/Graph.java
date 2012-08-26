@@ -155,6 +155,12 @@ public class Graph<V> {
 			result = 37*result + this.value.hashCode();
 			return result;
 		}
+		
+		@Override
+		public String toString()
+		{
+			return value.toString();
+		}
 	}
 		
 	public static Graph<String> graphFromStringEdges(Collection<String> egdgesAsStrings, EdgeType edgeType)

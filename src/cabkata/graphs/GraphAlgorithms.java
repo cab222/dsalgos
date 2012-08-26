@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
@@ -23,6 +24,25 @@ public class GraphAlgorithms<V> {
     private final Map<V, Integer> startTime = new HashMap<V, Integer>();
     private final Map<V, Integer> distances = new HashMap<V, Integer>();
     private int time = 0;
+    private final static Comparator<WeightedEdge<? extends Object>> EDGE_COMPARATOR = 
+    		new Comparator<WeightedEdge<? extends Object>>(){
+		@Override
+		public int compare(WeightedEdge<?> o1, WeightedEdge<?> o2)
+		{
+			if(o1 == o2)
+				return 0;
+			
+			if(o1.getWeight() < o2.getWeight())
+			{
+				return -1;
+			}
+			else
+			{
+				return 1;
+			}
+		}
+    };
+    
     private static enum NodeSate
     {
     	UNVISITED,
@@ -166,23 +186,7 @@ public class GraphAlgorithms<V> {
 		}
 		
 		//edges are now sorted by weight
-		Collections.sort(edges, new Comparator<WeightedEdge<V>>(){
-			@Override
-			public int compare(WeightedEdge<V> o1, WeightedEdge<V> o2)
-			{
-				if(o1 == o2)
-					return 0;
-				
-				if(o1.getWeight() < o2.getWeight())
-				{
-					return -1;
-				}
-				else
-				{
-					return 1;
-				}
-			}
-		});
+		Collections.sort(edges, EDGE_COMPARATOR);
 		
 		for(WeightedEdge<V> edge : edges)
 		{
@@ -199,5 +203,57 @@ public class GraphAlgorithms<V> {
 		}
 		
 		return mst;
+	}
+
+	public Set<WeightedEdge<V>> minimumSpanningTreePrim(Graph<V> graph, V rootValue)
+	{
+		Node<V> rootNode = graph.getNode(rootValue);
+		if(rootNode == null)
+			throw new IllegalArgumentException("root value not found in graph");
+		
+		initializeGraph(graph);
+		HashMap<V, WeightedEdge<V>> mst = new HashMap<V,WeightedEdge<V>>();
+		final Map<Node<V>, Double> nodeKeyValues = new HashMap<Node<V>, Double>();
+		for(Node<V> node : graph.getNodes())
+		{
+			nodeKeyValues.put(node, Double.MAX_VALUE);
+		}
+		
+		PriorityQueue<Node<V>> priorityQ = new PriorityQueue<Node<V>>(graph.getNodes().size(), new Comparator<Node<V>>(){
+			@Override
+			public int compare(Node<V> o1, Node<V> o2)
+			{	
+				return nodeKeyValues.get(o1).compareTo(nodeKeyValues.get(o2));
+			}
+		});
+		priorityQ.addAll(graph.getNodes());
+		updateNodeKey(rootNode, nodeKeyValues, priorityQ, 0);
+		
+		while(!priorityQ.isEmpty())
+		{
+			Node<V> currentNode = priorityQ.poll();
+			for(WeightedEdge<V> edge : currentNode.getAdjacentyList())
+			{
+				Node<V> adjacentNode = edge.getTo();
+				
+				if(priorityQ.contains(adjacentNode) && edge.getWeight() < nodeKeyValues.get(adjacentNode).doubleValue())
+				{
+					predecessors.put(adjacentNode.getValue(), currentNode.getValue());
+					mst.put(adjacentNode.getValue(), edge);
+					updateNodeKey(adjacentNode, nodeKeyValues, priorityQ, edge.getWeight());
+				}
+			}
+		}
+
+		return new HashSet<WeightedEdge<V>>(mst.values());
+	}
+
+	private void updateNodeKey(Node<V> node, 
+			final Map<Node<V>, Double> nodeKeyValues,
+			PriorityQueue<Node<V>> priorityQ, double value)
+	{
+		nodeKeyValues.put(node, Double.valueOf(value));
+		priorityQ.remove(node);
+		priorityQ.add(node);
 	}
 }
