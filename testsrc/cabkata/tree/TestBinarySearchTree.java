@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import cabkata.tree.BinarySearchTree.Node;
 
-public class TestBinarySearchTree {
+public final class TestBinarySearchTree {
     BinarySearchTree<Integer> tree = new BinarySearchTree<Integer>();
 
     @Before

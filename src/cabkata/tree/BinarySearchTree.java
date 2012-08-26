@@ -1,6 +1,6 @@
 package cabkata.tree;
 
-public class BinarySearchTree<V extends Comparable<? super V>> {
+public final class BinarySearchTree<V extends Comparable<? super V>> {
     Node<V> root;
 
     static class Node<V extends Comparable<? super V>> {

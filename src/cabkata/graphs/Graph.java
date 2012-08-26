@@ -10,7 +10,7 @@ import java.util.Set;
  * 
  * @param <V>
  */
-public class Graph<V> {
+public final class Graph<V> {
     private final Map<V, Node<V>> nodes = new HashMap<V, Node<V>>();
     private final Set<WeightedEdge<V>> edges = new HashSet<WeightedEdge<V>>();
 
@@ -48,7 +48,7 @@ public class Graph<V> {
         return edgeCopy;
     }
 
-    public static class WeightedEdge<T> {
+    public final static class WeightedEdge<T> {
         private Node<T> from;
         private Node<T> to;
         private double weight;
@@ -111,7 +111,7 @@ public class Graph<V> {
         }
     }
 
-    public static class Node<T> {
+    public final static class Node<T> {
         private T value;
         // TODO: is incident the right term? i feel like adjacent refers to the
         // node

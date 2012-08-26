@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class DisjointSet<V> {
+public final class DisjointSet<V> {
     private Map<V, Set<V>> data = new HashMap<V, Set<V>>();
 
     public Set<V> add(V v)

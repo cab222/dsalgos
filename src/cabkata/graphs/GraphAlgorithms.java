@@ -17,7 +17,7 @@ import cabkata.graphs.Graph.Node;
 import cabkata.graphs.Graph.WeightedEdge;
 import cabkata.sets.DisjointSet;
 
-public class GraphAlgorithms<V> {
+public final class GraphAlgorithms<V> {
     private final Map<V, NodeSate> nodeState = new HashMap<V, NodeSate>();
     private final Map<V, V> predecessors = new HashMap<V, V>();
     private final Map<V, Integer> finishTime = new HashMap<V, Integer>();
