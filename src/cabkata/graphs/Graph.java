@@ -104,9 +104,7 @@ public final class Graph<V> {
         @Override
         public String toString()
         {
-            return new StringBuffer("<").append(from.value).append(",")
-                    .append(to.value).append(",").append(weight).append(">")
-                    .toString();
+            return String.format("<%s,%s,%f>", from.value, to.value, weight);
         }
     }
 
