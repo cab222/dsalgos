@@ -21,10 +21,6 @@ public final class TestGraphingAlgorithms {
                 "pants,belt", "belt,jacket", "shirt,tie", "shirt,belt",
                 "tie,jacket", "socks,shoes");
 
-        /*
-         * socks <17,18> undershorts <15,16> pants <13,14> watch <11,12> shoes
-         * <9,10> shirt <1,8> belt <6,7> tie <2,5> jacket <3,4>
-         */
         Graph<String> graph = Graph.graphFromStringEdges(edgesAsString,
                 EdgeType.DIRECTED);
         GraphAlgorithms<String> graphAlgorithms = new GraphAlgorithms<String>();
