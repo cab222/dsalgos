@@ -28,21 +28,22 @@ public final class TestGraphingAlgorithms {
         Graph<String> graph = Graph.graphFromStringEdges(edgesAsString,
                 EdgeType.DIRECTED);
         GraphAlgorithms<String> graphAlgorithms = new GraphAlgorithms<String>();
-        List<String> topoloicalSortedList = graphAlgorithms
-                .toplogicalSort(graph);
-        assertEquals(topoloicalSortedList.get(0), "socks");
-        assertEquals(topoloicalSortedList.get(1), "undershorts");
-        assertEquals(topoloicalSortedList.get(2), "pants");
-        assertEquals(topoloicalSortedList.get(3), "watch");
-        assertEquals(topoloicalSortedList.get(4), "shoes");
-        assertEquals(topoloicalSortedList.get(5), "shirt");
-        assertEquals(topoloicalSortedList.get(6), "belt");
-        assertEquals(topoloicalSortedList.get(7), "tie");
-        assertEquals(topoloicalSortedList.get(8), "jacket");
-        assertEquals(graphAlgorithms.getStart("socks"), 17);
-        assertEquals(graphAlgorithms.getFinish("socks"), 18);
-        assertEquals(graphAlgorithms.getStart("tie"), 2);
-        assertEquals(graphAlgorithms.getFinish("tie"), 5);
+        List<String> topoloicalSortedList = 
+                graphAlgorithms.toplogicalSort(graph);
+    
+        assertEquals("shirt", topoloicalSortedList.get(0));
+        assertEquals("undershorts", topoloicalSortedList.get(1));
+        assertEquals("socks",  topoloicalSortedList.get(2));
+        assertEquals("watch", topoloicalSortedList.get(3));
+        assertEquals("pants", topoloicalSortedList.get(4));
+        assertEquals("belt", topoloicalSortedList.get(5));
+        assertEquals("tie", topoloicalSortedList.get(6));
+        assertEquals("shoes", topoloicalSortedList.get(7));
+        assertEquals("jacket", topoloicalSortedList.get(8));
+        assertEquals(13, graphAlgorithms.getStart("socks"));
+        assertEquals(14, graphAlgorithms.getFinish("socks"));
+        assertEquals(5, graphAlgorithms.getStart("tie"));
+        assertEquals(6, graphAlgorithms.getFinish("tie"));
     }
 
     @Test
@@ -54,12 +55,12 @@ public final class TestGraphingAlgorithms {
                 EdgeType.UNDIRECTED);
         GraphAlgorithms<String> graphAlgorithms = new GraphAlgorithms<String>();
         graphAlgorithms.breadthFirstSearch(graph, "s");
-        assertEquals(graphAlgorithms.getDistance("r"), 1);
-        assertEquals(graphAlgorithms.getDistance("w"), 1);
-        assertEquals(graphAlgorithms.getDistance("t"), 2);
-        assertEquals(graphAlgorithms.getDistance("x"), 2);
-        assertEquals(graphAlgorithms.getDistance("u"), 3);
-        assertEquals(graphAlgorithms.getDistance("y"), 3);
+        assertEquals(1, graphAlgorithms.getDistance("r"));
+        assertEquals(1, graphAlgorithms.getDistance("w"));
+        assertEquals(2, graphAlgorithms.getDistance("t"));
+        assertEquals(2, graphAlgorithms.getDistance("x"));
+        assertEquals(3, graphAlgorithms.getDistance("u"));
+        assertEquals(3, graphAlgorithms.getDistance("y"));
     }
 
     @Test
