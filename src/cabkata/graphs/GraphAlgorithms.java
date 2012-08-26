@@ -197,7 +197,7 @@ public final class GraphAlgorithms<V> {
             Set<Node<V>> fromSet = disjointSet.get(from);
             Set<Node<V>> toSet = disjointSet.get(to);
 
-            if (fromSet != toSet)
+            if (!fromSet.equals(toSet))
             {
                 disjointSet.union(from, to);
                 mst.add(edge);

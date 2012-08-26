@@ -72,9 +72,9 @@ public final class TestGraphingAlgorithms {
                 EdgeType.UNDIRECTED);
         assertEquals(edgesAsString.size() * 2, graph.getEdges().size());
         GraphAlgorithms<String> graphAlgo = new GraphAlgorithms<String>();
-        Set<WeightedEdge<String>> mstEdges = graphAlgo
-                .minimumSpanningTreeKruskal(graph);
-        assertEquals(mstEdges.size(), 8);
+        Set<WeightedEdge<String>> mstEdges = 
+                graphAlgo.minimumSpanningTreeKruskal(graph);
+        assertEquals(8, mstEdges.size());
 
         double sum = 0;
         for (WeightedEdge<String> edge : mstEdges)
