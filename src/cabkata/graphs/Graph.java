@@ -1,6 +1,7 @@
 package cabkata.graphs;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -27,8 +28,7 @@ public final class Graph<V> {
      */
     public Collection<Node<V>> getNodes()
     {
-        Set<Node<V>> nodeCopy = new HashSet<Node<V>>(nodes.values());
-        return nodeCopy;
+        return Collections.unmodifiableCollection(nodes.values());
     }
 
     public Node<V> getNode(V v)
@@ -44,14 +44,13 @@ public final class Graph<V> {
      */
     public Collection<WeightedEdge<V>> getEdges()
     {
-        Set<WeightedEdge<V>> edgeCopy = new HashSet<WeightedEdge<V>>(edges);
-        return edgeCopy;
+        return Collections.unmodifiableSet(edges);
     }
 
     public final static class WeightedEdge<T> {
-        private Node<T> from;
-        private Node<T> to;
-        private double weight;
+        private final Node<T> from;
+        private final Node<T> to;
+        private final double weight;
 
         private WeightedEdge(Node<T> from, Node<T> to, double weight)
         {
@@ -112,10 +111,10 @@ public final class Graph<V> {
     }
 
     public final static class Node<T> {
-        private T value;
+        private final T value;
         // TODO: is incident the right term? i feel like adjacent refers to the
         // node
-        private Set<WeightedEdge<T>> incidentEdges;
+        private final Set<WeightedEdge<T>> incidentEdges;
 
         private Node(T value)
         {
@@ -130,9 +129,7 @@ public final class Graph<V> {
 
         public Collection<WeightedEdge<T>> getAdjacentyList()
         {
-            Set<WeightedEdge<T>> edgeCopy = new HashSet<WeightedEdge<T>>(
-                    incidentEdges);
-            return edgeCopy;
+            return Collections.unmodifiableSet(incidentEdges);
         }
 
         @Override
@@ -171,7 +168,7 @@ public final class Graph<V> {
     public static Graph<String> graphFromStringEdges(
             Collection<String> egdgesAsStrings, EdgeType edgeType)
     {
-        Graph<String> graph = new Graph<String>();
+        final Graph<String> graph = new Graph<String>();
 
         for (String edge : egdgesAsStrings)
         {
@@ -184,8 +181,8 @@ public final class Graph<V> {
 
             // TODO: If I really want this to be generic, I should have some
             // V.valueOf(String string)
-            String fromValue = parts.length > 0 ? parts[0] : null;
-            String toValue = parts.length > 1 ? parts[1] : null;
+            final String fromValue = parts.length > 0 ? parts[0] : null;
+            final String toValue = parts.length > 1 ? parts[1] : null;
 
             Node<String> fromNode = null;
             Node<String> toNode = null;
@@ -221,8 +218,7 @@ public final class Graph<V> {
     private static void addEdge(Graph<String> graph, Node<String> fromNode,
             Node<String> toNode, double weight)
     {
-        WeightedEdge<String> edge1 = new WeightedEdge<String>(fromNode, toNode,
-                weight);
+        final WeightedEdge<String> edge1 = new WeightedEdge<String>(fromNode, toNode, weight);
         if (!graph.edges.contains(edge1))
         {
             graph.edges.add(edge1);
@@ -232,12 +228,8 @@ public final class Graph<V> {
 
     private static Node<String> createNode(Graph<String> graph, String value)
     {
-        Node<String> fromNode;
-        if (graph.nodes.containsKey(value))
-        {
-            fromNode = graph.nodes.get(value);
-        }
-        else
+        Node<String> fromNode = graph.nodes.get(value);
+        if (fromNode == null)
         {
             fromNode = new Node<String>(value);
             graph.nodes.put(value, fromNode);
