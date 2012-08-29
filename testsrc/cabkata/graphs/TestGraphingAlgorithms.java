@@ -59,15 +59,19 @@ public final class TestGraphingAlgorithms {
         assertEquals(3, graphAlgorithms.getDistance("y"));
     }
 
-    @Test
-    public void testMinimumSpanningTree()
+    private Graph<String> undirectedWeightedGraph()
     {
         List<String> edgesAsString = Arrays.asList("a,b,4", "a,h,8", "b,c,8",
                 "b,h,11", "c,d,7", "c,f,4", "d,e,9", "d,f,14", "e,f,10",
                 "f,g,2", "g,i,6", "g,h,1", "h,i,7", "i,c,2");
-        Graph<String> graph = Graph.graphFromStringEdges(edgesAsString,
-                EdgeType.UNDIRECTED);
-        assertEquals(edgesAsString.size() * 2, graph.getEdges().size());
+        return Graph.graphFromStringEdges(edgesAsString, EdgeType.UNDIRECTED);
+    }
+            
+    @Test
+    public void testMinimumSpanningTree()
+    {
+        Graph<String> graph = undirectedWeightedGraph();
+        assertEquals(28, graph.getEdges().size());
         GraphAlgorithms<String> graphAlgo = new GraphAlgorithms<String>();
         Set<WeightedEdge<String>> mstEdges = 
                 graphAlgo.minimumSpanningTreeKruskal(graph);
@@ -90,4 +94,13 @@ public final class TestGraphingAlgorithms {
         assertEquals(37.0, sum, .0001);
 
     }
+
+    @Test
+    public void testSingleSourceShortestPath()
+    {
+        Graph<String> graph = undirectedWeightedGraph();
+        GraphAlgorithms<String> algo = new GraphAlgorithms<String>();
+        algo.singleSourceShortestPathBellmanFord(graph, "a");
+    }
+            
 }

@@ -18,12 +18,14 @@ import cabkata.graphs.Graph.WeightedEdge;
 import cabkata.sets.DisjointSet;
 
 public final class GraphAlgorithms<V> {
-    private final Map<V, NodeSate> nodeState = new HashMap<V, NodeSate>();
-    private final Map<V, V> predecessors = new HashMap<V, V>();
-    private final Map<V, Integer> finishTime = new HashMap<V, Integer>();
-    private final Map<V, Integer> startTime = new HashMap<V, Integer>();
-    private final Map<V, Integer> distances = new HashMap<V, Integer>();
-    private int time = 0;
+    private final Map<V, NodeSate> nodeState;
+    private final Map<V, V> predecessors;
+    private final Map<V, Integer> finishTime;
+    private final Map<V, Integer> startTime;
+    private final Map<V, Integer> distances;
+    private final Map<Node<V>, Double> nodeKeys;
+    private int time;
+    
     private final static Comparator<WeightedEdge<? extends Object>> EDGE_COMPARATOR = new Comparator<WeightedEdge<? extends Object>>()
     {
         @Override
@@ -48,6 +50,18 @@ public final class GraphAlgorithms<V> {
         UNVISITED, VISITED, FINISHED
     }
 
+
+    public GraphAlgorithms()
+    {
+        nodeState = new HashMap<V, NodeSate>();
+        predecessors = new HashMap<V, V>(); //BFS,DFS
+        finishTime = new HashMap<V, Integer>(); //DFS
+        startTime = new HashMap<V, Integer>(); //DFS
+        distances = new HashMap<V, Integer>(); //BFS, PRIM
+        nodeKeys = new HashMap<Node<V>, Double>(); //PRIM
+        time = 0; //DFS
+    }
+    
     /**
      * Performs a topological sort
      * 
@@ -56,8 +70,9 @@ public final class GraphAlgorithms<V> {
      */
     public List<V> toplogicalSort(Graph<V> graph)
     {
+        validateGraphNotNull(graph);
         List<V> topologicalSort = new ArrayList<V>();
-        initializeGraph(graph);
+        initializeAlgoState(graph);
 
         for (Node<V> node : graph.getNodes())
         {
@@ -68,6 +83,24 @@ public final class GraphAlgorithms<V> {
         }
         return topologicalSort;
     }
+
+    private void validateGraphNotNull(Graph<V> graph)
+    {
+        if(graph == null)
+        {
+            throw new IllegalArgumentException("graph is null");   
+        }
+    }
+    
+    private void validateGraphAndSourceNotNull(Graph<V> graph, V source)
+    {
+        validateGraphNotNull(graph);
+        if(source == null)
+        {
+            throw new IllegalArgumentException("source is null");
+        }            
+    }
+    
 
     private boolean isNodeUnvisted(Node<V> node)
     {
@@ -109,8 +142,10 @@ public final class GraphAlgorithms<V> {
         topologicalSort.add(0, node.getValue());
     }
 
-    private void initializeGraph(Graph<V> graph)
+    private void initializeAlgoState(Graph<V> graph)
     {
+        validateGraphNotNull(graph);
+        
         time = 0;
         nodeState.clear();
         predecessors.clear();
@@ -125,6 +160,7 @@ public final class GraphAlgorithms<V> {
             finishTime.put(node.getValue(), Integer.valueOf(0));
             startTime.put(node.getValue(), Integer.valueOf(0));
             distances.put(node.getValue(), Integer.valueOf(0));
+            nodeKeys.put(node, Double.MAX_VALUE);
         }
     }
 
@@ -140,7 +176,8 @@ public final class GraphAlgorithms<V> {
 
     public void breadthFirstSearch(Graph<V> graph, V source)
     {
-        initializeGraph(graph);
+        validateGraphAndSourceNotNull(graph, source);
+        initializeAlgoState(graph);
         Queue<Node<V>> q = new LinkedList<Node<V>>();
         Node<V> sourceNode = graph.getNode(source);
         nodeState.put(sourceNode.getValue(), NodeSate.VISITED);
@@ -172,7 +209,7 @@ public final class GraphAlgorithms<V> {
     {
         return distances.get(v).intValue();
     }
-
+    
     public Set<WeightedEdge<V>> minimumSpanningTreeKruskal(Graph<V> graph)
     {
         Set<WeightedEdge<V>> mst = new HashSet<WeightedEdge<V>>();
@@ -210,17 +247,14 @@ public final class GraphAlgorithms<V> {
     public Set<WeightedEdge<V>> minimumSpanningTreePrim(Graph<V> graph,
             V rootValue)
     {
+        validateGraphAndSourceNotNull(graph, rootValue);
+        
         Node<V> rootNode = graph.getNode(rootValue);
         if (rootNode == null)
             throw new IllegalArgumentException("root value not found in graph");
 
-        initializeGraph(graph);
+        initializeAlgoState(graph);
         HashMap<V, WeightedEdge<V>> mst = new HashMap<V, WeightedEdge<V>>();
-        final Map<Node<V>, Double> nodeKeyValues = new HashMap<Node<V>, Double>();
-        for (Node<V> node : graph.getNodes())
-        {
-            nodeKeyValues.put(node, Double.MAX_VALUE);
-        }
 
         PriorityQueue<Node<V>> priorityQ = new PriorityQueue<Node<V>>(graph
                 .getNodes().size(), new Comparator<Node<V>>()
@@ -228,11 +262,11 @@ public final class GraphAlgorithms<V> {
             @Override
             public int compare(Node<V> o1, Node<V> o2)
             {
-                return nodeKeyValues.get(o1).compareTo(nodeKeyValues.get(o2));
+                return getNodeKey(o1).compareTo(getNodeKey(o2));
             }
         });
         priorityQ.addAll(graph.getNodes());
-        updateNodeKey(rootNode, nodeKeyValues, priorityQ, 0);
+        updateNodeKeyAndQ(rootNode, priorityQ, 0);
 
         while (!priorityQ.isEmpty())
         {
@@ -242,14 +276,11 @@ public final class GraphAlgorithms<V> {
                 Node<V> adjacentNode = edge.getTo();
 
                 if (priorityQ.contains(adjacentNode)
-                        && edge.getWeight() < nodeKeyValues.get(adjacentNode)
-                                .doubleValue())
+                        && edge.getWeight() < getNodeKey(adjacentNode))
                 {
-                    predecessors.put(adjacentNode.getValue(),
-                            currentNode.getValue());
+                    predecessors.put(adjacentNode.getValue(), currentNode.getValue());
                     mst.put(adjacentNode.getValue(), edge);
-                    updateNodeKey(adjacentNode, nodeKeyValues, priorityQ,
-                            edge.getWeight());
+                    updateNodeKeyAndQ(adjacentNode, priorityQ, edge.getWeight());
                 }
             }
         }
@@ -257,12 +288,73 @@ public final class GraphAlgorithms<V> {
         return new HashSet<WeightedEdge<V>>(mst.values());
     }
 
-    private void updateNodeKey(Node<V> node,
-            final Map<Node<V>, Double> nodeKeyValues,
+    private Double getNodeKey(Node<V> adjacentNode)
+    {
+        return nodeKeys.get(adjacentNode);
+    }
+
+    private void updateNodeKeyAndQ(Node<V> node,
             PriorityQueue<Node<V>> priorityQ, double value)
     {
-        nodeKeyValues.put(node, Double.valueOf(value));
+        setNodeKey(node, value);
         priorityQ.remove(node);
         priorityQ.add(node);
+    }
+
+    private void setNodeKey(Node<V> node, double value)
+    {
+        nodeKeys.put(node, Double.valueOf(value));
+    }
+
+    /**
+     * 
+     * @param graph
+     * @param source
+     * @return boolean indicating whether the graph contains negative cycles
+     */
+    public boolean singleSourceShortestPathBellmanFord(Graph<V> graph, V source)
+    {
+        validateGraphAndSourceNotNull(graph, source);     
+        initializeAlgoState(graph);
+        final int numNodes = graph.getNodes().size();
+        Node<V> sourceNode = graph.getNode(source);
+        
+        if(sourceNode == null)
+        {
+            throw new IllegalArgumentException("source value not found in graph");
+        }
+        
+        setNodeKey(sourceNode, 0.0);  
+        //The shortest path can be at longest |V| - 1 edges
+        for(int i = 1; i < numNodes -1; i++)
+        {
+            for(WeightedEdge<V> edge : graph.getEdges())
+            {
+                relaxEdge(edge);
+            }
+        }
+        
+        //first |V| - 1 passes should have converged on the shortest path
+        //any further ability to relax indicates a negative cycle
+        for(WeightedEdge<V> edge : graph.getEdges())
+        {
+            if(relaxEdge(edge))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean relaxEdge(WeightedEdge<V> edge)
+    {
+        final double totalCost = edge.getWeight() + getNodeKey(edge.getFrom()).doubleValue();
+        if(totalCost < getNodeKey(edge.getTo()))
+        {
+            predecessors.put(edge.getTo().getValue(), edge.getFrom().getValue());
+            setNodeKey(edge.getTo(), totalCost);
+            return true;
+        }
+        return false;
     }
 }
