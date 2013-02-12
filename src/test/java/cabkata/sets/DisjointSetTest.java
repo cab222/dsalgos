@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-public final class TestDisjointSets {
+public final class DisjointSetTest {
 
     @Test
     public void testDisjointSet()

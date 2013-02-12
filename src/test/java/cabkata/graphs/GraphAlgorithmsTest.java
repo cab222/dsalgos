@@ -11,7 +11,7 @@ import org.junit.Test;
 import cabkata.graphs.Graph.EdgeType;
 import cabkata.graphs.Graph.WeightedEdge;
 
-public final class TestGraphingAlgorithms {
+public final class GraphAlgorithmsTest {
 
     @Test
     public void testToplogicalSort()
