@@ -6,26 +6,26 @@
 	<groupId>com.cabkata</groupId>
 	<artifactId>dsalgos</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 	<name>dsalgos</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     	<junit.version>4.9</junit.version>
-    	<guava.version>13.0.1</guava.version>		
+    	<guava.version>13.0.1</guava.version>
 	</properties>
 
 	<repositories>
 	</repositories>
-	
-	<dependencies> 
+
+	<dependencies>
 	    <dependency>
 	      <groupId>junit</groupId>
 	      <artifactId>junit</artifactId>
 	      <version>${junit.version}</version>
 	      <scope>test</scope>
 	    </dependency>
-	    
+
 	    <dependency>
 	      <groupId>com.google.guava</groupId>
 	      <artifactId>guava</artifactId>
@@ -57,7 +57,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>			
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
@@ -103,7 +103,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>			
+			</plugin>
 		</plugins>
 	</build>
 </project>
